@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE  @map("free")
+  BASIC @map("basic")
+}
+
+enum ProjectStatus {
+  NOT_STARTED @map("not_started")
+  IN_PROGRESS @map("in_progress")
+  QUEUED      @map("queued")
+  FINISHED    @map("finished")
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar()
+  document  String   @db.VarChar(14)
+  logoUrl   String   @map("logo_url") @db.VarChar()
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  projects  Project[]
+  users     User[]
+  workTimes WorkTime[]
+
+  @@map("companies")
+}
+
+model WorkTime {
+  id      Int    @id @default(autoincrement())
+  initial String @db.VarChar()
+  final   String @db.VarChar()
+  workDay String @map("work_day")
+
+  companyId String?  @map("company_id")
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index(companyId)
+  @@index(userId)
+  @@map("work_times")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String   @db.VarChar()
+  email         String   @db.VarChar()
+  password      String   @db.VarChar()
+  admin         Boolean  @default(false)
+  costPerHour   Float    @default(0) @map("cost_per_hour")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  isResponsable Boolean  @default(false) @map("is_responsable")
+
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  usersProjects UserProject[]
+  appointments  Appointment[]
+  workTimes     WorkTime[]
+
+  @@index(companyId)
+  @@index(email)
+  @@map("users")
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar()
+  description  String   @db.Text()
+  budgetAmount Float    @map("budget_amount")
+  amountSpent  Float    @map("amount_spent")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  usersProjects UserProject[]
+  projectStages ProjectStage[]
+
+  @@index([companyId, name])
+  @@map("projects")
+}
+
+model ProjectStage {
+  id                   Int           @id @default(autoincrement())
+  name                 String        @db.VarChar()
+  description          String        @db.Text()
+  estimatedInitialDate DateTime      @map("estimated_initial_date")
+  estimatedFinalDate   DateTime      @map("estimated_final_date")
+  realInitialDate      DateTime      @map("real_initial_date")
+  realFinalDate        DateTime      @map("real_final_date")
+  status               ProjectStatus @default(NOT_STARTED)
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+
+  projectId String  @map("project_id")
+  project   Project @relation(fields: [projectId], references: [id])
+
+  appointments Appointment[]
+
+  @@map("project_stages")
+}
+
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  initialTime DateTime @map("initial_time")
+  finalTime   DateTime @map("final_time")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  projectStageId Int          @map("project_stage_id")
+  projectStage   ProjectStage @relation(fields: [projectStageId], references: [id])
+
+  @@map("appointments")
+}
+
+model UserProject {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  projectId String   @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@map("users_projects")
+}
