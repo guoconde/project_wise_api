@@ -20,8 +20,8 @@ app.get('/', (request: Request, response: Response) => {
 });
 
 app.use((error: Error, request: Request, response: Response, _next: NextFunction) => {
-  // Send errors to Sentry or other monitoring tools
-  console.error(error); // Use a logger here instead of console.error (e.g. Pino)
+  // eslint-disable-next-line no-console
+  console.error(error);
 
   return response.status(500).json({
     message: 'Internal Server Error',
