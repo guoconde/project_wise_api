@@ -13,6 +13,7 @@
     "noImplicitOverride": true,
     "strictPropertyInitialization": false,
     "removeComments": true,
+    "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
