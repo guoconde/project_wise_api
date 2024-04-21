@@ -1,7 +1,7 @@
-import { HashGenarator } from '@/domain/cryptography/hash-generator';
-import { CreateUserInput, User } from '@/domain/enterprise/user';
-import { UserAlreadyExistsError } from '@/domain/errors/user-already-exists.error';
-import { UserRepository } from '@/domain/repositories/user.repository';
+import { HashGenarator } from '@/domain/cryptography';
+import { CreateUserInput, User } from '@/domain/enterprise';
+import { UserAlreadyExistsError } from '@/domain/errors';
+import { UsersRepository } from '@/domain/repositories';
 import { inject, injectable } from 'tsyringe';
 
 interface CreateUserOutput {
@@ -11,15 +11,15 @@ interface CreateUserOutput {
 @injectable()
 export class CreateUserUseCase {
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @inject('UsersRepository')
+    private readonly usersRepository: UsersRepository,
     @inject('HashGenerator')
     private readonly hashGenarator: HashGenarator,
   ) {}
 
   async execute(input: CreateUserInput): Promise<CreateUserOutput> {
     const { email, companyId, password } = input;
-    const userAlreadyExistOnThisCompany = await this.userRepository.findByEmailAndCompanyId({
+    const userAlreadyExistOnThisCompany = await this.usersRepository.findByEmailAndCompanyId({
       email,
       companyId,
     });
@@ -30,7 +30,7 @@ export class CreateUserUseCase {
 
     const hashedPassword = await this.hashGenarator.hash(password);
 
-    const user = await this.userRepository.create({
+    const user = await this.usersRepository.create({
       ...input,
       password: hashedPassword,
     });

@@ -1,14 +1,14 @@
-import { CreateUserInput, User } from '@/domain/enterprise/user';
-import { UserRepository } from '@/domain/repositories/user.repository';
+import { CreateUserInput, User } from '@/domain/enterprise';
+import { UsersRepository } from '@/domain/repositories';
 import { randomUUID } from 'crypto';
 
-export class InMemoryUsersRepository implements UserRepository {
+export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
 
   async create(user: CreateUserInput): Promise<User> {
     const setUser = {
-      id: randomUUID(),
       ...user,
+      id: randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
       costPerHour: 0,

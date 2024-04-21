@@ -1,6 +1,5 @@
-import { Encrypter } from '@/domain/cryptography/encrypter';
-import { HashComparer } from '@/domain/cryptography/hash-comparer';
-import { UserRepository } from '@/domain/repositories/user.repository';
+import { Encrypter, HashComparer } from '@/domain/cryptography';
+import { UsersRepository } from '@/domain/repositories';
 import { inject, injectable } from 'tsyringe';
 
 interface AuthenticateUserInput {
@@ -15,8 +14,8 @@ interface AuthenticateUserOutput {
 @injectable()
 export class AuthenticateUserUseCase {
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @inject('UsersRepository')
+    private readonly usersRepository: UsersRepository,
     @inject('HashComparer')
     private readonly hashComparer: HashComparer,
     @inject('Encripter')
@@ -24,7 +23,7 @@ export class AuthenticateUserUseCase {
   ) {}
 
   async execute({ email, password }: AuthenticateUserInput): Promise<AuthenticateUserOutput> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new Error();

@@ -1,6 +1,6 @@
 import { CreateUserInput, User } from '../enterprise/user';
 
-export interface UserRepository {
+export interface UsersRepository {
   create(user: CreateUserInput): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
   findByEmailAndCompanyId({
