@@ -1,4 +1,13 @@
+import { CreateUserInput, User } from '../enterprise/user';
+
 export interface UserRepository {
-  create(email: string, password: string): Promise<string>;
-  findByEmail(email: string): Promise<string | null>;
+  create(user: CreateUserInput): Promise<User>;
+  findByEmail(email: string): Promise<User | null>;
+  findByEmailAndCompanyId({
+    email,
+    companyId,
+  }: {
+    email: string;
+    companyId: string;
+  }): Promise<User | null>;
 }

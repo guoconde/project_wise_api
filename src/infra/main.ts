@@ -1,5 +1,5 @@
-import 'dotenv/config';
 import 'reflect-metadata';
+import 'dotenv/config';
 import './config/module-alias';
 
 import { prisma } from './database/connection';

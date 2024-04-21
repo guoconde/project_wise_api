@@ -4,9 +4,11 @@
 import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
 import tsConfigPaths from 'vite-tsconfig-paths';
+import path from 'node:path';
 
 export default defineConfig({
   test: {
+    setupFiles: [path.resolve(__dirname, 'tests.setup.js')],
     globals: true,
     root: './',
   },
