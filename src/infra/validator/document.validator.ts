@@ -77,7 +77,6 @@ export class DocumentValidator implements CNPJValidator, CPFValidator {
   }
 
   public validate(document: string): boolean {
-    console.log('aqui');
     const isCNPJ = document.length === 14;
 
     if (isCNPJ) {
