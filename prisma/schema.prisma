@@ -67,7 +67,7 @@ model User {
   costPerHour   Int      @default(0) @map("cost_per_hour")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
-  isResponsable Boolean  @default(false) @map("is_responsable")
+  isResponsible Boolean  @default(false) @map("is_responsable")
 
   companyId String  @map("company_id")
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)

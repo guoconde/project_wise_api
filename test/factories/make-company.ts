@@ -3,7 +3,10 @@ import { faker } from '@faker-js/faker';
 import { makeUser } from './make-user';
 
 export const makeCompany = (override: Partial<CreateCompanyInput>) => {
-  const user = makeUser();
+  const user = makeUser({
+    isResponsible: true,
+    admin: true,
+  });
 
   const company: CreateCompanyInput = {
     document: faker.number.int({ min: 14, max: 14 }).toString(),

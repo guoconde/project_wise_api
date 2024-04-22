@@ -10,7 +10,7 @@ export const makeUser = (override: Partial<UserProps> = {}, id?: UniqueEntityID[
     name: faker.person.fullName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
-    isResponsable: faker.datatype.boolean(),
+    isResponsible: faker.datatype.boolean(),
     admin: faker.datatype.boolean(),
     costPerHour: faker.number.float(),
     createdAt: faker.date.anytime(),

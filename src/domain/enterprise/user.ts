@@ -8,7 +8,7 @@ export interface UserProps {
   costPerHour: number;
   createdAt: Date;
   updatedAt: Date;
-  isResponsable: boolean;
+  isResponsible: boolean;
   companyId: string;
 }
 

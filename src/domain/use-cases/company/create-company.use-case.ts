@@ -1,7 +1,8 @@
 import { HashGenarator } from '@/domain/cryptography';
 import { Company, CreateCompanyInput } from '@/domain/enterprise';
-import { CompanyAlreadyExistsError } from '@/domain/errors';
+import { CompanyAlreadyExistsError, InvalidDocumentError } from '@/domain/errors';
 import { CompaniesRepository } from '@/domain/repositories';
+import { DocumentValidator } from '@/infra/validator';
 import { inject, injectable } from 'tsyringe';
 
 interface CreateCompanyOutput {
@@ -15,10 +16,18 @@ export class CreateCompanyUseCase {
     private readonly companiesRepository: CompaniesRepository,
     @inject('HashGenarator')
     private readonly hashGenarator: HashGenarator,
+    @inject('DocumentValidator')
+    private readonly documentValidator: DocumentValidator,
   ) {}
 
   async execute(input: CreateCompanyInput): Promise<CreateCompanyOutput> {
     const { document, user } = input;
+
+    const isValid = this.documentValidator.validate(document);
+
+    if (!isValid) {
+      throw new InvalidDocumentError();
+    }
 
     const companyDocumentAlreadyRegistered =
       await this.companiesRepository.findByDocument(document);
